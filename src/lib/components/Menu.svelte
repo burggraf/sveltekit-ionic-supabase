@@ -288,7 +288,7 @@
 			Terms of Service
 		</div>
 		<br />
-		<div class="pointer centered" on:click={toggleDebugger}>AIRES v.{app_version}</div>
+		<div class="pointer centered" on:click={toggleDebugger}>{app_name} v.{app_version}</div>
 		<div id="debugger" class="hidden">
 			<span
 				class="pointer"

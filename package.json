@@ -1,6 +1,8 @@
 {
   "name": "sveltekit-ionic-base",
   "version": "0.0.1",
+  "menu_title": "sveltekit-ionic-base",
+  "menu_subtitle": "base app setup",
   "private": true,
   "scripts": {
     "dev": "vite dev --host",
