@@ -1,189 +1,354 @@
 <script lang="ts">
-	import { onMount } from "svelte";
-	import { goto } from "$app/navigation";
-	import { dev } from "$app/environment";
-  
-	import { pwaBeforeInstallPrompt, canInstall } from "$lib/services/pwa";
-	import { showMenu } from "$lib/services/menu";
-  
-	import { menuController, modalController, registerMenu } from "ionic-svelte";
-	import { isPlatform } from "@ionic/core";
-	import * as allIonicIcons from "ionicons/icons";
-  
-	import IOSInstall from "$lib/components/IOSInstall.svelte";
-  
-	//	let hideMenu = true; // a hack because the menu shows before the splash (in Chrome on Windows)
-	$: hideMenu = !$showMenu;
-  
-	export let side: "start" | "end" | undefined = "start";
-  
-	let inlineModalOpen = false;
-    
-	// this is unfortunately needed in order to have the menuController API function properly
-	onMount(() => {
-	  registerMenu("mainmenu");
-	});
-  
-	// and build the menu list from it
-	//const modules = import.meta.glob("../../**/*.svelte", { as: "raw" });
-  
-	// console.log("MODULES", modules);
-  
-	// ChatGPT suggestion
-	// let input = '../../routes/components/Card/+page.svelte';
-	// let regex = /components\/(.+?)\//;
-	// let match = input.match(regex);
-	// console.log(match[1]); // outputs "Card"
+	import { onMount } from 'svelte'
+	import { goto } from '$app/navigation'
+	import { page } from '$app/stores'
+	import { currentUser } from '$services/supabase.auth.service'
+	import Login from '$components/Login.svelte'
 
-	const menuItems = [{
-		icon: allIonicIcons.airplaneOutline,
-		label:"Tabs",
-		url:"/components/tabs/explain"}
+	import AccordionMenu from './AccordionMenu.svelte'
+
+	import { pwaBeforeInstallPrompt, canInstall } from '$lib/services/pwa'
+
+	import { menuController, modalController, registerMenu } from 'ionic-svelte'
+	import { isPlatform } from '@ionic/core'
+	import * as allIonicIcons from 'ionicons/icons'
+
+	import IOSInstall from '$lib/components/IOSInstall.svelte'
+
+	let hideMenu = true // a hack because the menu shows before the splash (in Chrome on Windows)
+	export let side = 'start'
+	import { showConfirm } from '$services/alert.service'
+
+	// ** get package info
+	const app_version = __APP_VERSION__
+	const app_name = __APP_NAME__
+	const app_homepage = __APP_HOMEPAGE__
+	const app_description = __APP_DESCRIPTION__
+	const app_menu_title = __APP_MENU_TITLE__
+	const app_menu_subtitle = __APP_MENU_SUBTITLE__
+	const app_theme_color = __APP_THEME_COLOR__
+	const app_background_color = __APP_BACKGROUND_COLOR__
+	// *******************
+
+	import { toast } from '$services/toast'
+	import { isOnline } from '$services/network.service'
+
+	onMount(() => {
+		// this is unfortunately needed in order to have the menuController API function properly
+		registerMenu('mainmenu')
+	})
+
+	interface AppPage {
+		title: string
+		url: string
+		icon?: string
+		iosIcon?: string
+		mdIcon?: string
+		children: AppChild[]
+	}
+	interface AppChild {
+		title: string
+		url: string
+		icon: string
+		disabled?: boolean
+	}
+
+	const adminPages: AppPage[] = [
+		{
+			title: 'Dashboard',
+			url: 'dashboard',
+			icon: 'barChart',
+			children: [
+				{ title: 'Welcome', url: 'dashboardwelcome', icon: 'map', disabled: false },
+				{ title: 'Messages', url: 'airemail', icon: 'map', disabled: false },
+				{ title: 'Alerts', url: 'alerts', icon: 'map', disabled: true },
+				{ title: 'Client Portal', url: 'dsh-activity', icon: 'map', disabled: true },
+				{ title: 'Listing Activity', url: 'dsh-listingactivity', icon: 'map', disabled: true },
+			],
+		},
+		{
+			title: 'Properties',
+			url: 'properties',
+			icon: 'home',
+			children: [
+				{ title: 'Map Search', url: 'propertymap/search', icon: 'map' },
+				// { title: 'Property Search', url: 'propertysearch', icon: 'search', disabled: true },
+				{ title: 'Property Groups', url: 'groups/property', icon: 'list', disabled: false },
+				{ title: 'Saved Searches', url: 'savesearch', icon: 'bookmark', disabled: true },
+			],
+		},
+		{
+			title: 'Service Providers',
+			url: 'providers',
+			icon: 'hammer',
+			children: [
+				{ title: 'My Providers', url: 'providersmy', icon: 'home', disabled: false },
+				{ title: 'Order Home Services', url: 'order-home', icon: 'home', disabled: false },
+				{ title: 'Other Providers', url: 'srv-others', icon: 'cart', disabled: true },
+				{ title: 'Add My Providers', url: 'provideradd', icon: 'add' },
+			],
+		},
+		{
+			title: 'RE Agents',
+			url: 'agents',
+			icon: 'people',
+			children: [
+				{ title: 'Agent Search', url: 'agentsearch', icon: 'search' },
+				{ title: 'Agent Groups', url: 'groups/member', icon: 'list', disabled: false },
+				{ title: 'Real Estate Offices', url: 'officesearch', icon: 'business' },
+				{ title: 'Office Groups', url: 'groups/office', icon: 'list', disabled: false },
+				{ title: 'Agent Association', url: 'agent-association', icon: 'people', disabled: true },
+			],
+		},
+		{
+			title: 'Help & Information',
+			url: 'information',
+			icon: 'informationCircle',
+			children: [
+				{ title: 'About AIRES', url: 'about', icon: 'map', disabled: false },
+				{ title: 'Terms of Use', url: 'terms', icon: 'map', disabled: false },
+				{ title: 'Privacy Policy', url: 'privacy', icon: 'map', disabled: false },
+				{ title: 'Support', url: 'support', icon: 'map', disabled: false },
+			],
+		},
+		{
+			title: 'Settings & Profile',
+			url: 'settings',
+			icon: 'settings',
+			children: [
+				// { title: "Settings", url: "set-settings", icon: "map" },
+				// { title: "My Profile", url: "set-profile", icon: "map" },
+				// { title: "Setup Payment Method", url: "set-setuppayment", icon: "map" },
+				{ title: 'Settings', url: 'settings', icon: 'settings', disabled: false },
+			],
+		},
+		{
+			title: 'Admin',
+			url: 'admin',
+			icon: 'lockClosed',
+			children: [
+				{ title: 'AIRE Users', url: 'adm-users', icon: 'map', disabled: true },
+				{ title: 'Associations', url: 'adm-associations', icon: 'map', disabled: true },
+				{ title: 'Data', url: 'adm-data', icon: 'map', disabled: true },
+			],
+		},
+	]
+	const sidemenu: any = null;
+	const badges: any = {};
+
+	const appPages: Array<{ title: string, url: string; requireLogin: boolean; icon: any }> = [
+		{ title: 'Start', url: '/', icon: allIonicIcons.informationCircleOutline, requireLogin: false },
 	]
 
 	const closeAndNavigate = async (url: string) => {
-	  // take the google tag from the main thread
-	  setTimeout(() => {
-		//@ts-ignore
-		if (!dev) window.gtag("event", url);
-	  }, 100);
-  
-	  console.log("Navigate url", url);
-  
-	  goto(url);
-	  menuController.close("mainmenu");
-	};
-  
+		goto(url)
+
+		menuController.close('mainmenu')
+	}
+
 	// hack because of visibility of menu in Chrome/Windows
 	setTimeout(() => {
-	  //	hideMenu = false;
-	}, 100);
-  
-	let iosInstall = isPlatform("ios") && !isPlatform("pwa");
-  
+		hideMenu = false
+	}, 100)
+
+	let iosInstall = isPlatform('ios') && !isPlatform('pwa')
+
 	const showIOSinstall = async () => {
-	  const modal = await modalController.create({
-		component: IOSInstall,
-		componentProps: {},
-		showBackdrop: true,
-		backdropDismiss: false,
-	  });
-  
-	  modal.onDidDismiss().then((value) => {
-		console.log("Dismissed the modal", value);
-		if (value.role === "backdrop") console.log("Backdrop clicked");
-	  });
-  
-	  await modal.present();
-	};
-  
-	function capitalizeFirstLetter(text: string) {
-	  return text.charAt(0).toUpperCase() + text.slice(1);
+		const modal = await modalController.create({
+			component: IOSInstall,
+			componentProps: {},
+			showBackdrop: true,
+			backdropDismiss: false,
+		})
+
+		modal.onDidDismiss().then((value) => {
+			//if (value.role === 'backdrop') console.log('Backdrop clicked');
+		})
+
+		await modal.present()
 	}
-  </script>
-  
-  <ion-menu {side} content-id="main" menu-id="mainmenu" class:menuhide={hideMenu}>
-	<ion-modal is-open={inlineModalOpen}>
-	  <br />
-  
-	  <ion-content>
-		<ion-card>
-		  <ion-card-header>
-			<ion-card-title>Ionic Svelte - Unofficial Ionic integration</ion-card-title>
-		  </ion-card-header>
-		  <ion-card-content>
-			<p>Ionic-Svelte is work in progress and needs your support.</p>
-			<br />
-			<p>
-			  Share how you are using it, what is really working for you and which parts need
-			  improvement.
-			</p>
-			<br />
-			<p>
-			  Do you like this? Star the project on Github - <a
-				href="https://github.com/Tommertom/svelte-ionic-app"
-				target="_new">https://github.com/Tommertom/svelte-ionic-app</a
-			  >
-			</p>
-			<br />
-			<p>
-			  Join <a
-				href="https://discordapp.com/channels/520266681499779082/1049388501629681675"
-				target="_new">Ionic-Svelte channel</a
-			  > on Ionic's official discord
-			</p>
-			<br /><br />
-			<p>Thanks!!! Tommertom</p>
-			<br />
-			<img src="icon-128.png" width="25%" alt="Feedback" />
-		  </ion-card-content>
-		</ion-card>
-		<br />
-		<ion-button role="button" tabindex="0"
-		  expand="block"
-		  on:click={() => {
-			inlineModalOpen = false;
-		  }}
-		>
-		  Close modal
-		</ion-button>
-		vite v4.
-	  </ion-content>
-	</ion-modal>
-  
-	{#if menuItems.length > 0}
-	  <ion-header>
-		<ion-toolbar>
-		  <ion-title>Menu</ion-title>
+	const toggleOnlineStatus = async (e: any) => {
+		await showConfirm({
+			header: 'Manually set online status',
+			message: `Force online status to <b>${$isOnline ? 'Offline' : 'Online'}</b>?`,
+			okHander: async () => {
+				isOnline.set(!$isOnline)
+				toast(
+					`Online status set to: <b>${$isOnline ? 'Online' : 'Offline'}</b>`,
+					$isOnline ? 'success' : 'danger'
+				)
+			},
+		})
+	}
+	const toggleDebugger = () => {
+		const el = document.getElementById('debugger')
+		if (el) {
+			if (el.classList.contains('hidden')) {
+				el.classList.remove('hidden')
+			} else {
+				el.classList.add('hidden')
+			}
+		}
+	}
+	const toggleSyncTime = () => {
+		const el = document.getElementById('syncTime')
+		if (el) {
+			if (el.classList.contains('hidden')) {
+				el.classList.remove('hidden')
+			} else {
+				el.classList.add('hidden')
+			}
+		}
+	}
+</script>
+
+
+
+<ion-menu {side} content-id="main" menu-id="mainmenu" class:menuhide={hideMenu}>
+	<ion-header>
+		<ion-toolbar color="primary">
+			<ion-title>{app_menu_title}</ion-title>
+			<ion-img src="/assets/icon-white.svg" style="margin-left:10px;height:40px;width:40px;" />
 		</ion-toolbar>
-	  </ion-header>
-	  <ion-content>
+	</ion-header>
+	<ion-content class="">
+		<p class="menu_subtitle">
+			{app_menu_subtitle}
+		</p>
+		<div class="login">
+			<ion-menu-toggle auto-hide="false">
+				<Login
+					providers={['google', 'facebook']}
+					onSignOut={() => {
+						localStorage.clear()
+						// goto('/');
+						window.location.href = '/'
+					}}
+					onSignIn={() => {
+						goto('/dashboardwelcome');
+					}}
+					profileFunction={() => {
+						//console.log('do some profileFunction here')
+					}}
+				/>
+			</ion-menu-toggle>
+		</div>
+
+		<AccordionMenu appPages={adminPages} menuRef={sidemenu} {badges} />
+
 		<ion-list>
-		  {#each menuItems as menuItem, i}
-			<ion-item role="menuitem" tabindex="0"
-			  on:click={() => {
-				closeAndNavigate(menuItem.url);
-			  }}
-			>
-			  <ion-icon icon={menuItem.icon} slot="start" color="primary" />
-			  <ion-label>{menuItem.label}</ion-label>
-			</ion-item>
-		  {/each}
-  
-		  <ion-item />
-		  {#if iosInstall}
-			<ion-item role="menuitem" tabindex="1"
-			on:click={showIOSinstall}>
-			  <ion-icon icon={allIonicIcons["download"]} slot="start" />
-			  <ion-label>Install this app as PWA</ion-label>
-			</ion-item>
-			<ion-item />
-		  {/if}
-		  {#if $canInstall}
-			<ion-item role="menuitem" tabindex="2"
-			  on:click={() => {
-				const prompt = $pwaBeforeInstallPrompt;
-				prompt.prompt();
-			  }}
-			>
-			  <ion-icon icon={allIonicIcons["download"]} slot="start" />
-			  <ion-label>Install this app as PWA</ion-label>
-			</ion-item>
-			<ion-item />
-		  {/if}
-  
+			<ion-item lines="none" />
+			{#if iosInstall}
+				<ion-item on:click={showIOSinstall} lines="none">
+					<ion-icon icon={allIonicIcons['download']} slot="start" />
+					<ion-label>Install this app as PWA</ion-label>
+				</ion-item>
+				<ion-item lines="none" />
+			{/if}
+			{#if $canInstall}
+				<ion-item
+					lines="none"
+					on:click={() => {
+						const prompt = $pwaBeforeInstallPrompt
+						prompt.prompt()
+					}}
+				>
+					<ion-icon icon={allIonicIcons['download']} slot="start" />
+					<ion-label>Install this app as PWA</ion-label>
+				</ion-item>
+				<ion-item lines="none" />
+			{/if}
 		</ion-list>
-	  </ion-content>
-	{/if}
-  </ion-menu>
-  
-  <style>
+	</ion-content>
+	<ion-footer class="ion-padding">
+		{#if $currentUser}
+			<div
+				class="pointer centered"
+				on:click={() => {
+					closeAndNavigate('/account')
+				}}
+			/>
+			<br />
+		{/if}
+		<div
+			class="pointer centered"
+			on:click={() => {
+				closeAndNavigate('/privacy')
+			}}
+		>
+			Privacy Policy
+		</div>
+		<br />
+		<div
+			class="pointer centered"
+			on:click={() => {
+				closeAndNavigate('/terms')
+			}}
+		>
+			Terms of Service
+		</div>
+		<br />
+		<div class="pointer centered" on:click={toggleDebugger}>AIRES v.{app_version}</div>
+		<div id="debugger" class="hidden">
+			<span
+				class="pointer"
+				on:click={() => {
+					localStorage.clear()
+				}}>clear cache</span
+			>
+			<span class="pointer span-on-right" on:click={toggleOnlineStatus}>
+				<ion-label color={$isOnline ? 'success' : 'danger'}
+					><b>{$isOnline ? 'Online' : 'Offline'}</b></ion-label
+				>
+			</span>
+		</div>
+		<br />
+	</ion-footer>
+</ion-menu>
+
+<style>
 	ion-item {
-	  cursor: pointer;
+		cursor: pointer;
 	}
-  
+	.active-item {
+		font-weight: bold;
+	}
+
 	.menuhide {
-	  display: none;
+		display: none;
 	}
-  </style>
-  
+
+	.hidden {
+		display: none;
+	}
+	.pointer {
+		cursor: pointer;
+	}
+	.span-on-right {
+		text-align: right;
+		float: right;
+		padding-right: 5px;
+	}
+	.centered {
+		text-align: center;
+	}
+	ion-menu ion-content {
+		--background: var(--ion-item-background, var(--ion-background-color, #fff));
+	}
+
+	ion-item:hover {
+		--background: var(--ion-color-light);
+		font-weight: bold;
+		color: var(--ion-color-primary);
+	}
+	.menu_subtitle {
+		margin-left: 8px;
+		margin-right: 8px;
+		text-align: center;
+		color: var(--ion-color-medium);
+	}
+	.login {
+		margin-left: 10px;
+		margin-right: 10px;
+	}
+</style>

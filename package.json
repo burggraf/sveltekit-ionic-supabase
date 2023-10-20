@@ -24,6 +24,7 @@
   "dependencies": {
     "@capacitor/core": "^5.5.0",
     "@ionic/core": "^7.2.1",
+    "@supabase/supabase-js": "^2.38.2",
     "ionic-svelte": "^0.5.82",
     "ionicons": "^7.2.1",
     "vite-plugin-pwa": "^0.16.5"

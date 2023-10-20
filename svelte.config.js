@@ -11,7 +11,15 @@ const config = {
 			assets: 'build',
 			fallback: 'index.html',
 			precompress: false
-		})
+		}),
+		alias: {
+			'$ionic': 'src/lib/ionic',
+			'$interfaces': 'src/interfaces',
+			'$services': 'src/services',
+			'$stores': 'src/stores',
+			'$components': 'src/components',
+			'$localdata': 'src/localdata',
+		},		
 	}
 };
 
