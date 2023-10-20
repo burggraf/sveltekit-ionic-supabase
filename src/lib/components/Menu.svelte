@@ -59,45 +59,7 @@
 			url: 'dashboard',
 			icon: 'barChart',
 			children: [
-				{ title: 'Welcome', url: 'dashboardwelcome', icon: 'map', disabled: false },
-				{ title: 'Messages', url: 'airemail', icon: 'map', disabled: false },
-				{ title: 'Alerts', url: 'alerts', icon: 'map', disabled: true },
-				{ title: 'Client Portal', url: 'dsh-activity', icon: 'map', disabled: true },
-				{ title: 'Listing Activity', url: 'dsh-listingactivity', icon: 'map', disabled: true },
-			],
-		},
-		{
-			title: 'Properties',
-			url: 'properties',
-			icon: 'home',
-			children: [
-				{ title: 'Map Search', url: 'propertymap/search', icon: 'map' },
-				// { title: 'Property Search', url: 'propertysearch', icon: 'search', disabled: true },
-				{ title: 'Property Groups', url: 'groups/property', icon: 'list', disabled: false },
-				{ title: 'Saved Searches', url: 'savesearch', icon: 'bookmark', disabled: true },
-			],
-		},
-		{
-			title: 'Service Providers',
-			url: 'providers',
-			icon: 'hammer',
-			children: [
-				{ title: 'My Providers', url: 'providersmy', icon: 'home', disabled: false },
-				{ title: 'Order Home Services', url: 'order-home', icon: 'home', disabled: false },
-				{ title: 'Other Providers', url: 'srv-others', icon: 'cart', disabled: true },
-				{ title: 'Add My Providers', url: 'provideradd', icon: 'add' },
-			],
-		},
-		{
-			title: 'RE Agents',
-			url: 'agents',
-			icon: 'people',
-			children: [
-				{ title: 'Agent Search', url: 'agentsearch', icon: 'search' },
-				{ title: 'Agent Groups', url: 'groups/member', icon: 'list', disabled: false },
-				{ title: 'Real Estate Offices', url: 'officesearch', icon: 'business' },
-				{ title: 'Office Groups', url: 'groups/office', icon: 'list', disabled: false },
-				{ title: 'Agent Association', url: 'agent-association', icon: 'people', disabled: true },
+				{ title: 'Welcome', url: 'welcome', icon: 'map', disabled: false },
 			],
 		},
 		{
@@ -105,7 +67,7 @@
 			url: 'information',
 			icon: 'informationCircle',
 			children: [
-				{ title: 'About AIRES', url: 'about', icon: 'map', disabled: false },
+				{ title: 'About...', url: 'about', icon: 'map', disabled: false },
 				{ title: 'Terms of Use', url: 'terms', icon: 'map', disabled: false },
 				{ title: 'Privacy Policy', url: 'privacy', icon: 'map', disabled: false },
 				{ title: 'Support', url: 'support', icon: 'map', disabled: false },
@@ -127,9 +89,7 @@
 			url: 'admin',
 			icon: 'lockClosed',
 			children: [
-				{ title: 'AIRE Users', url: 'adm-users', icon: 'map', disabled: true },
-				{ title: 'Associations', url: 'adm-associations', icon: 'map', disabled: true },
-				{ title: 'Data', url: 'adm-data', icon: 'map', disabled: true },
+				{ title: 'Users', url: 'adm-users', icon: 'map', disabled: true },
 			],
 		},
 	]
