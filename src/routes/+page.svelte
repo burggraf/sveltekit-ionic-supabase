@@ -1,4 +1,16 @@
-
+<script lang="ts">
+	import { IonPage } from 'ionic-svelte';
+</script>
+<IonPage>
+<ion-header translucent={true}>
+	<ion-toolbar>
+		<ion-buttons slot="start">
+			<ion-menu-button />
+		</ion-buttons>
+		<ion-title>Main</ion-title>
+	</ion-toolbar>
+</ion-header>
+<ion-content>
   <ion-card>
 	<ion-card-header>
 		<ion-card-subtitle>Great success!!</ion-card-subtitle>
@@ -42,5 +54,5 @@
 		>
 	</ion-item>
 </ion-card>
-
-  
+</ion-content>
+</IonPage>

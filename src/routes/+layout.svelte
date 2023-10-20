@@ -1,5 +1,7 @@
 <script lang='ts'>
 	import { setupIonicBase } from 'ionic-svelte';
+	import { pwaStatusStream, type PWAStatus } from '$lib/services/pwa';
+	import Menu from '$lib/components/Menu.svelte';
 
 	/* Call Ionic's setup routine */
 	setupIonicBase({mode:'ios'});
@@ -9,6 +11,8 @@
 
 	/* Theme variables */
 	import '../theme/variables.css';
+
+	// import 'ionic-svelte/components/all';
 
 	/*
 		This part - import 'ionic-svelte/components/all'; -  loads all components at once.
@@ -41,8 +45,25 @@
 		Want to know what is happening more - follow me on Twitter - https://twitter.com/Tommertomm
 		Discord channel on Ionic server - https://discordapp.com/channels/520266681499779082/1049388501629681675
 	*/
+
+	pwaStatusStream.subscribe((status: PWAStatus) => {
+		console.log('PWA status', status);
+
+		if (status.updateFunction) {
+			console.log('PWA updating itself in 4 secs......');
+			setTimeout(() => {
+				status.updateFunction();
+			}, 4000);
+		}
+	});
+
 </script>
 
 <ion-app>
-	<slot />
+	<ion-split-pane content-id="main">
+		<Menu />
+		<div class="ion-page" id="main">
+			<slot />
+		</div>
+	</ion-split-pane>
 </ion-app>
