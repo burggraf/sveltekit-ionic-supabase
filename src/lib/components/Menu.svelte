@@ -18,66 +18,29 @@
 	export let side: "start" | "end" | undefined = "start";
   
 	let inlineModalOpen = false;
-  
-	const getRandomColor = () => {
-	  const items = [
-		"secondary",
-		"primary",
-		"danger",
-		"warning",
-		"dark",
-		"medium",
-		"success",
-		"tertiary",
-	  ];
-	  return items[Math.floor(Math.random() * items.length)];
-	};
-  
+    
 	// this is unfortunately needed in order to have the menuController API function properly
 	onMount(() => {
 	  registerMenu("mainmenu");
 	});
   
 	// and build the menu list from it
-	const modules = import.meta.glob("../../**/*.svelte", { as: "raw" });
+	//const modules = import.meta.glob("../../**/*.svelte", { as: "raw" });
   
-	console.log("MODULES", modules);
-	let menuItems: Array<{ url: string; label: string; icon: any }> = Object.keys(modules)
-	  .filter((key) => key.includes("/routes/components/") && !key.includes("[tab]"))
-	  .map((key) =>
-		capitalizeFirstLetter(
-		  key.replace("../../routes/components/", "").replace("/+page.svelte", "")
-		)
-	  )
-	  .concat(["Tabs"])
-	  .sort()
-  
-	  .map((componentName) => {
-		// console.log('COMPONENTN', componentName);
-		const url =
-		  componentName !== "Tabs" ? `/components/${componentName}` : `/components/tabs/explain`;
-		return {
-		  url,
-		  label: componentName,
-		  icon: allIonicIcons["home"],
-		};
-	  });
+	// console.log("MODULES", modules);
   
 	// ChatGPT suggestion
 	// let input = '../../routes/components/Card/+page.svelte';
 	// let regex = /components\/(.+?)\//;
 	// let match = input.match(regex);
 	// console.log(match[1]); // outputs "Card"
-  
-	// Randomize the icons
-	const icons = Object.keys(allIonicIcons);
-	menuItems.map((menuItem) => {
-	  const iconForMenu = icons[Math.floor(Math.random() * icons.length)];
-	  // @ts-ignore
-	  menuItem.icon = allIonicIcons[iconForMenu];
-	});
-	menuItems = [...menuItems];
-  
+
+	const menuItems = [{
+		icon: allIonicIcons.airplaneOutline,
+		label:"Tabs",
+		url:"/components/tabs/explain"}
+	]
+
 	const closeAndNavigate = async (url: string) => {
 	  // take the google tag from the main thread
 	  setTimeout(() => {
@@ -152,7 +115,7 @@
 			<br /><br />
 			<p>Thanks!!! Tommertom</p>
 			<br />
-			<img src="/assets/svelte-ionic-logo.png" width="25%" alt="Feedback" />
+			<img src="icon-128.png" width="25%" alt="Feedback" />
 		  </ion-card-content>
 		</ion-card>
 		<br />
@@ -182,7 +145,7 @@
 				closeAndNavigate(menuItem.url);
 			  }}
 			>
-			  <ion-icon icon={menuItem.icon} slot="start" color={getRandomColor()} />
+			  <ion-icon icon={menuItem.icon} slot="start" color="primary" />
 			  <ion-label>{menuItem.label}</ion-label>
 			</ion-item>
 		  {/each}
