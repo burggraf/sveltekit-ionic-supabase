@@ -168,7 +168,7 @@
 	<ion-header>
 		<ion-toolbar color="primary">
 			<ion-title>{app_menu_title}</ion-title>
-			<ion-img src="/assets/icon-white.svg" style="margin-left:10px;height:40px;width:40px;" />
+			<ion-img src="/icon.svg" style="margin-left:10px;height:40px;width:40px;" />
 		</ion-toolbar>
 	</ion-header>
 	<ion-content class="">
