@@ -2,7 +2,7 @@
 	import { setupIonicBase } from 'ionic-svelte';
 
 	/* Call Ionic's setup routine */
-	setupIonicBase();
+	setupIonicBase({mode:'ios'});
 
 	/* Import all components - or do partial loading - see below */
 	import 'ionic-svelte/components/all';
