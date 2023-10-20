@@ -11,12 +11,12 @@ Install community-maintained integrations:
   https://github.com/svelte-add/svelte-adders
 
 Capacitor configuration - see: capacitor.config.json|ts
-  App name sveltekit-ionic-base
-  Package name sveltekit-ionic-base.ionic.io
+  App name sveltekit-ionic-supabase
+  Package name sveltekit-ionic-supabase.ionic.io
   Vite dev server url http://192.168.137.1:5173/
 
 Next steps:
-  1: cd sveltekit-ionic-base
+  1: cd sveltekit-ionic-supabase
   2: npm i @capacitor/android and/or @capacitor/ios
   3: npx cap add android and/or ios
   4: npm run build to fill the build directory

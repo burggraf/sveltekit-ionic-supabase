@@ -1,8 +1,8 @@
 
 import { CapacitorConfig } from '@capacitor/cli';
 
-const appId = 'sveltekit-ionic-base.ionic.io';
-const appName = 'sveltekit-ionic-base';
+const appId = 'sveltekit-ionic-supabase.ionic.io';
+const appName = 'sveltekit-ionic-supabase';
 const server = process.argv.includes('-hmr') ? {
   'url': 'http://192.168.1.109:5173',   // always have http:// in url
   'cleartext': true
