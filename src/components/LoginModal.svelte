@@ -165,7 +165,7 @@
 	<ion-toolbar id="selectorToolbar">
 		<ion-title>{app_menu_title} Sign {#if signUpMode}Up{:else}In{/if}</ion-title>
 		<ion-buttons slot="start">
-			<ion-button on:click={closeOverlay}>
+			<ion-button on:click={closeOverlay} role="button" tabindex="0">
 				<ion-icon
 					slot="icon-only"
 					icon={closeOutline}
@@ -234,7 +234,11 @@
 						color="medium"
 						/>
 					</ion-item>
-					<div on:click={doResetPassword} class="ion-text-right" style="padding-top:10px">
+					<div on:click={doResetPassword} 
+						role="button"
+						tabindex="0"
+						class="ion-text-right" 
+						style="padding-top:10px">
 						<ion-label><b>Forgot password?</b></ion-label>
 					</div>
 				</ion-col>
@@ -250,6 +254,8 @@
 				<ion-row>
 					<ion-col>
 						<ion-button
+							role="button"
+							tabindex="0"
 							expand="block"
 							color="primary"
 							disabled={!validateEmail(email) || password.length < 6}
@@ -260,6 +266,8 @@
 						</ion-button>
 						<div
 							on:click={toggleSignUpMode}
+							role="button"
+							tabindex="0"
 							class="ion-text-center"
 							style="cursor: pointer;padding-top:10px"
 						>
@@ -272,6 +280,8 @@
 				<ion-row>
 					<ion-col>
 						<ion-button
+							role="button"
+							tabindex="0"
 							expand="block"
 							disabled={!validateEmail(email) || password.length < 6}
 							on:click={signUp}
@@ -281,6 +291,8 @@
 						>
 						<div
 							on:click={toggleSignUpMode}
+							role="button"
+							tabindex="0"
 							class="ion-text-center"
 							style="cursor: pointer;padding-top:10px"
 						>
@@ -296,6 +308,8 @@
 					</div>
 					<ion-button
 						expand="block"
+						role="button"
+						tabindex="0"
 						disabled={!validateEmail(email) || password.length > 0}
 						on:click={doSendMagicLink}
 					>

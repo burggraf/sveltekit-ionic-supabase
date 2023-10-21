@@ -185,7 +185,7 @@
 						window.location.href = '/'
 					}}
 					onSignIn={() => {
-						goto('/dashboardwelcome');
+						goto('/welcome');
 					}}
 					profileFunction={() => {
 						//console.log('do some profileFunction here')
