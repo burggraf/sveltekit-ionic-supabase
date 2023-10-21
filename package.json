@@ -1,6 +1,6 @@
 {
   "name": "sveltekit-ionic-supabase",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "menu_title": "sveltekit-ionic-supabase",
   "menu_subtitle": "base app setup",
   "private": true,

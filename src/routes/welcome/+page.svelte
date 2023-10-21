@@ -11,7 +11,7 @@
     </ion-header>
     <ion-content class="ion-padding">
         <h1>
-            Welcome
+            Welcome!
         </h1>
     </ion-content>
 </IonPage>
