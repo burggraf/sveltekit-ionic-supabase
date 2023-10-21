@@ -1,8 +1,10 @@
 {
   "name": "sveltekit-ionic-supabase",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "menu_title": "sveltekit-ionic-supabase",
   "menu_subtitle": "base app setup",
+  "description": "sveltekit-ionic-supabase",
+  "theme_color": "#ffffff",
   "private": true,
   "scripts": {
     "dev": "vite dev --host",

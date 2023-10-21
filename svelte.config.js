@@ -13,6 +13,7 @@ const config = {
 			precompress: false
 		}),
 		alias: {
+			'$lib': 'src/lib',
 			'$ionic': 'src/lib/ionic',
 			'$interfaces': 'src/interfaces',
 			'$services': 'src/services',
